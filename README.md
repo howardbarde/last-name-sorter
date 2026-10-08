@@ -1,31 +1,31 @@
 # Name Sorter
 
-A Java command-line application that reads names from a text file, sorts them alphabetically by last name and given names, and saves the results to an output file.
+A Java command-line application that reads names from a text file, sorts them alphabetically by **last name**, and writes the sorted results to an output file.
 
-The project uses Java 17, Maven, JUnit 5, and GitHub Actions for automated building and testing.
+The project is built with Java 17 and Maven, includes automated tests using JUnit 5, and uses GitHub Actions for continuous integration.
 
 ## Features
 
-- Reads names from a text file, with one full name per line.
+- Reads full names from a text file, one name per line.
 - Supports one to three given names followed by a last name.
-- Sorts alphabetically by last name, then given names.
-- Uses case-insensitive comparisons.
+- Sorts names alphabetically by last name, then by given names.
+- Performs case-insensitive comparisons.
 - Ignores blank lines and handles extra whitespace.
-- Validates names before processing them.
-- Displays sorted names in the terminal.
+- Validates name structure before sorting.
+- Prints sorted names to the terminal.
 - Saves results to `output/sorted-names-list.txt`.
-- Overwrites the output file on subsequent runs.
-- Includes automated unit tests and a GitHub Actions build pipeline.
+- Replaces the existing output file when the application runs again.
+- Includes automated unit tests and a CI build pipeline.
 
 ## Requirements
 
-Before running the application, make sure you have:
+The following tools are required:
 
 - Java Development Kit (JDK) 17 or later
 - Apache Maven
-- Git (for version control)
+- Git (to clone the repository)
 
-Check your installed versions:
+Verify the installations:
 
 ```bash
 java -version
@@ -35,57 +35,53 @@ git --version
 
 ## Getting Started
 
-### 1. Clone the repository
+### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/last-name-sorter.git
+git clone https://github.com/howardbarde/last-name-sorter.git
 cd last-name-sorter
 ```
 
-Replace `YOUR_USERNAME` with your GitHub username.
+If the project is already available locally, open its root directory in a terminal.
 
-If you already have the project locally, open its root directory in your terminal.
-
-### 2. Build the project
-
-Run:
+### 2. Build the Application
 
 ```bash
 mvn clean package
 ```
 
-This compiles the application, runs the unit tests, and creates a JAR file in the `target/` directory.
+This command compiles the application, executes the unit tests, and creates a JAR file in the `target/` directory.
 
-### 3. Run the application
+### 3. Run the Application
 
 ```bash
 java -cp target/classes com.howard.namesorter.Main ./input/unsorted-names-list.txt
 ```
 
-The application accepts one command-line argument: the path to the input file.
+The application requires exactly one command-line argument: the path to the input text file.
 
-You can use a different file by replacing the input path.
+To process a different file, replace `./input/unsorted-names-list.txt` with its path.
 
-### 4. View the results
+### 4. View the Results
 
-The sorted names are displayed in the terminal and saved to:
+Sorted names are printed to the terminal and saved to:
 
 ```text
 output/sorted-names-list.txt
 ```
 
-The application creates the `output/` directory if it does not exist.
+The application creates the `output/` directory if necessary and overwrites the output file on subsequent successful runs.
 
-If the output file already exists, its contents are replaced with the latest sorted results.
+The generated output file is excluded from Git version control.
 
 ## Sorting Rules
 
-Names are sorted using the following rules:
+Names are sorted according to the following rules:
 
 1. Compare last names alphabetically.
-2. If last names are the same, compare given names from left to right.
-3. If all shared given names match, the name with fewer given names comes first.
-4. Uppercase and lowercase letters are treated equally.
+2. When last names match, compare given names from left to right.
+3. When all shared given names match, the name with fewer given names comes first.
+4. Comparisons are case-insensitive.
 
 ### Example Input
 
@@ -107,28 +103,35 @@ Adam Smith
 Adam James Smith
 ```
 
-The same results are written to `output/sorted-names-list.txt`.
+The same sorted results are written to `output/sorted-names-list.txt`.
 
 ## Input Validation
 
-Each valid name must contain one to three given names and one last name.
+Each valid name must contain:
 
-The application ignores blank lines and handles extra spaces or tabs between name parts.
+- At least one given name.
+- No more than three given names.
+- Exactly one last-name token.
 
-For example, the following input is accepted:
+For example, the following names are valid:
 
 ```text
-  Marin    Alvarez
-Hunter   Uriah   Mathew   Clarke
+Marin Alvarez
+Adam James Smith
+Hunter Uriah Mathew Clarke
 ```
 
-The following inputs are rejected:
+The application also accepts extra spaces and tabs between name components.
+
+Examples of invalid input include:
 
 - `Alvarez` — missing given name.
 - `One Two Three Four Five` — more than three given names.
-- An empty given name or last name when constructing a `Name` object.
+- Empty given-name or last-name values when constructing a `Name` object.
 
-If an invalid name is encountered, the application displays an error message and exits.
+Blank lines are ignored.
+
+If an invalid name is encountered, the application reports an error and stops processing rather than silently discarding invalid data.
 
 ## Project Structure
 
@@ -145,42 +148,40 @@ last-name-sorter/
 ├── output/
 │   └── .gitkeep
 ├── src/
-│   ├── main/java/com/howard/namesorter/
-│   │   ├── Main.java
-│   │   ├── Name.java
-│   │   ├── NameReader.java
-│   │   ├── NameSorter.java
-│   │   ├── DefaultNameSorter.java
-│   │   ├── NameComparators.java
-│   │   └── NameWriter.java
-│   └── test/java/com/howard/namesorter/
-│       └── NameSorterTest.java
-└── target/                  (generated during build)
+│   ├── main/
+│   │   └── java/com/howard/namesorter/
+│   │       ├── Main.java
+│   │       ├── Name.java
+│   │       ├── NameReader.java
+│   │       ├── NameSorter.java
+│   │       ├── DefaultNameSorter.java
+│   │       ├── NameComparators.java
+│   │       └── NameWriter.java
+│   └── test/
+│       └── java/com/howard/namesorter/
+│           └── NameSorterTest.java
+└── target/                  (generated by Maven)
 ```
 
-The `output/sorted-names-list.txt` file is generated when the application runs. The `target/` directory is generated by Maven.
+The `target/` directory and generated sorted-name text file are excluded from version control.
 
 ## Application Design
 
-The application separates file handling, name validation, and sorting into focused classes.
+The application separates responsibilities into focused components to improve readability, maintainability, and testability.
 
 | Class | Responsibility |
 |---|---|
-| `Main` | Coordinates reading, sorting, and writing names |
-| `Name` | Represents a person's name and validates its parts |
-| `NameReader` | Reads and parses names from a text file |
-| `NameSorter` | Defines the interface for sorting names |
-| `DefaultNameSorter` | Sorts names using a supplied comparator |
-| `NameComparators` | Provides alphabetical comparison rules |
-| `NameWriter` | Writes sorted names to a text file |
+| `Main` | Coordinates reading, sorting, printing, and writing results |
+| `Name` | Represents a name and validates its components |
+| `NameReader` | Reads and parses names from the input file |
+| `NameSorter` | Defines the sorting contract |
+| `DefaultNameSorter` | Implements sorting using a supplied comparator |
+| `NameComparators` | Defines reusable name-comparison rules |
+| `NameWriter` | Writes sorted names to the output file |
 
 ### Sorting Implementation
 
-`NameSorter` defines the sorting operation, while `DefaultNameSorter` provides its implementation.
-
-The comparison rules are kept in `NameComparators`.
-
-For example:
+The application uses Java's `Comparator` interface to keep sorting rules separate from the sorting implementation.
 
 ```java
 NameSorter sorter = new DefaultNameSorter(
@@ -188,117 +189,120 @@ NameSorter sorter = new DefaultNameSorter(
 );
 ```
 
-This creates a sorter configured to compare names by last name first.
+`DefaultNameSorter` uses Java's built-in stream sorting operation, which has approximately **O(n log n)** time complexity.
 
-Keeping the comparison rules separate makes it possible to introduce another sorting order without changing `DefaultNameSorter`.
+Using a comparator allows different sorting rules to be introduced without modifying the sorter implementation.
 
-### SOLID Principles
+### Design Principles
 
-The design applies several SOLID principles:
+The implementation follows several object-oriented design principles:
 
-- **Single Responsibility:** Each class focuses on a specific part of the application.
-- **Open/Closed:** Different comparators can be supplied without modifying the sorting implementation.
-- **Liskov Substitution:** Implementations of `NameSorter` can be used through the same interface, provided they respect its contract.
-- **Interface Segregation:** `NameSorter` exposes only the sorting operation needed by its implementations.
-- **Dependency Inversion:** The sorting implementation depends on Java's `Comparator` abstraction, and application code uses the `NameSorter` interface.
+- **Single Responsibility Principle:** Each class has a clearly defined responsibility.
+- **Open/Closed Principle:** Different sorting strategies can be introduced through comparators.
+- **Dependency Inversion Principle:** Application code works with the `NameSorter` interface rather than relying exclusively on a concrete sorting class.
 
-The goal is to keep the application simple, readable, and easy to maintain without introducing unnecessary complexity.
+The design intentionally favors straightforward, maintainable code over unnecessary complexity.
 
 ## Unit Testing
 
-The project uses JUnit 5 to test sorting, name validation, and input handling.
+The project uses **JUnit 5** for automated testing.
 
-Run all tests using:
+Run the test suite:
 
 ```bash
 mvn clean test
 ```
 
-The test suite includes checks for:
+The tests cover:
 
-- Sorting by last name.
-- Sorting given names when last names match.
-- Supporting three given names.
-- Handling extra whitespace.
-- Rejecting names with only one word.
-- Rejecting more than three given names.
-- Rejecting empty given names.
-- Rejecting an empty last name.
-- Supporting reverse alphabetical sorting.
-- Supporting a custom first-name comparator.
+- Alphabetical sorting by last name.
+- Sorting by given names when last names match.
+- Names containing up to three given names.
+- Input containing extra whitespace.
+- Rejection of names without a given name.
+- Rejection of names with more than three given names.
+- Rejection of empty name components.
+- Reverse alphabetical sorting.
+- Custom comparator behavior.
 
-Maven reports the number of tests executed and whether they passed or failed.
+Maven reports the total number of executed tests and their results.
 
-## Continuous Integration (CI)
+## Continuous Integration
 
-The project uses GitHub Actions to automatically build and test the application.
+The project uses GitHub Actions to build, test, and verify the application automatically.
 
-The workflow is defined in:
+Workflow configuration:
 
 ```text
 .github/workflows/build.yml
 ```
 
-### When the Pipeline Runs
+### Workflow Triggers
 
-The pipeline runs automatically when:
+The pipeline runs when:
 
-- Changes are pushed to the `main` branch.
-- A pull request targets the `main` branch.
-- The workflow is manually started from GitHub Actions.
+- Changes are pushed to `main`.
+- A pull request targets `main`.
+- The workflow is started manually.
 
-### Build Pipeline Steps
+### Pipeline Steps
 
-The workflow performs the following steps:
+1. Check out the repository.
+2. Configure Java 17 using Eclipse Temurin.
+3. Build and test the application using Maven.
+4. Execute the Name Sorter against the sample input.
+5. Verify that the sorted output file was generated.
+6. Upload the compiled JAR as a workflow artifact.
 
-1. Checks out the repository.
-2. Sets up Java 17 using Eclipse Temurin.
-3. Runs `mvn --batch-mode clean verify` to compile, test, and package the application.
-4. Runs the application using the sample input file.
-5. Checks that `output/sorted-names-list.txt` was generated.
-6. Uploads the compiled JAR file as a build artifact.
+The Maven verification command is:
 
-If a required step fails, GitHub Actions marks the workflow as failed.
+```bash
+mvn --batch-mode clean verify
+```
 
-### Running the Pipeline Checks Locally
+### Run the Pipeline Checks Locally
 
-You can run the Maven verification step locally:
+Build and test:
 
 ```bash
 mvn clean verify
 ```
 
-Then run the application:
+Execute the application:
 
 ```bash
 java -cp target/classes com.howard.namesorter.Main ./input/unsorted-names-list.txt
 ```
 
-To check that the output file exists on macOS or Linux:
+Verify the output file exists on macOS or Linux:
 
 ```bash
 test -f output/sorted-names-list.txt && echo "Output file created successfully."
 ```
 
-### Viewing the Build Results
+### GitHub Actions Results
 
-To check the pipeline on GitHub:
+View the pipeline runs here:
 
-1. Open the project's GitHub repository.
-2. Select the **Actions** tab.
-3. Open the latest **Java Build and Test** workflow run.
-4. Review the build and test results.
+[GitHub Actions — Name Sorter](https://github.com/howardbarde/last-name-sorter/actions)
 
-The compiled JAR can also be downloaded from the workflow's artifacts section after a successful run.
+The compiled JAR is available as a workflow artifact after a successful run.
 
 ## Technologies Used
 
-- **Java 17** — Application development
-- **Maven** — Dependency management and build automation
-- **JUnit 5** — Unit testing
-- **Git and GitHub** — Version control
-- **GitHub Actions** — Continuous integration
+| Technology | Purpose |
+|---|---|
+| Java 17 | Application implementation |
+| Maven | Build automation and dependency management |
+| JUnit 5 | Automated unit testing |
+| Git | Version control |
+| GitHub | Source-code hosting |
+| GitHub Actions | Continuous integration |
 
 ## Author
 
-Howard Barde
+**Howard Barde**
+
+GitHub: [github.com/howardbarde](https://github.com/howardbarde)
+
+Repository: [github.com/howardbarde/last-name-sorter](https://github.com/howardbarde/last-name-sorter)
