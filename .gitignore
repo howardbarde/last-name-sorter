@@ -1,0 +1,14 @@
+# Maven build files
+target/
+
+# VS Code settings
+.vscode/
+
+# macOS files
+.DS_Store
+
+# Generated sorted results
+output/*.txt
+
+# Keep the output directory
+!output/.gitkeep
